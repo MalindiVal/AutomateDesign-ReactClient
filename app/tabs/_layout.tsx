@@ -1,20 +1,16 @@
-import { Tabs } from "expo-router";
-
+// app/tabs/_layout.tsx
 import Ionicons from "@expo/vector-icons/Ionicons";
+import { Tabs } from "expo-router";
 
 export default function TabLayout() {
   return (
     <Tabs
       screenOptions={{
-        tabBarActiveTintColor: "#ffd33d",
-        headerStyle: {
-          backgroundColor: "#25292e",
-        },
+        tabBarActiveTintColor: "#ff003c",
+        headerStyle: { backgroundColor: "#25292e" },
         headerShadowVisible: false,
         headerTintColor: "#fff",
-        tabBarStyle: {
-          backgroundColor: "#25292e",
-        },
+        tabBarStyle: { backgroundColor: "#25292e" },
       }}
     >
       <Tabs.Screen
@@ -31,14 +27,25 @@ export default function TabLayout() {
         }}
       />
       <Tabs.Screen
-        name="connexion"
+        name="list"
         options={{
-          title: "Connexion",
+          title: "Liste des automates",
           tabBarIcon: ({ color, focused }) => (
             <Ionicons
-              name={
-                focused ? "information-circle" : "information-circle-outline"
-              }
+              name={focused ? "list-sharp" : "list-outline"}
+              color={color}
+              size={24}
+            />
+          ),
+        }}
+      />
+      <Tabs.Screen
+        name="logout"
+        options={{
+          title: "Déconnexion",
+          tabBarIcon: ({ color, focused }) => (
+            <Ionicons
+              name={focused ? "log-out-sharp" : "log-out-outline"}
               color={color}
               size={24}
             />

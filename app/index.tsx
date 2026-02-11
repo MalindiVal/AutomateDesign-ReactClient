@@ -1,10 +1,51 @@
+import { utilisateurDao } from "@/api/utilisateurDao";
 import Button from "@/components/Button";
-import { useState } from "react";
-import { StyleSheet, Text, TextInput, View } from "react-native";
+import { storage } from "@/utils/storage";
+import { router } from "expo-router";
+import { useEffect, useState } from "react";
+import {
+    Alert,
+    Platform,
+    StyleSheet,
+    Text,
+    TextInput,
+    View,
+} from "react-native";
 
 export default function Index() {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
+
+  useEffect(() => {
+    const checkToken = async () => {
+      const token = await storage.getToken();
+      if (token) router.replace("/tabs");
+    };
+    checkToken();
+  }, []);
+
+  const handleLogin = async () => {
+    if (!username || !password) {
+      if (Platform.OS === "web") {
+        window.alert("Veuillez remplir tous les champs");
+      } else {
+        Alert.alert("Erreur", "Veuillez remplir tous les champs");
+      }
+      return;
+    }
+
+    try {
+      const data = await utilisateurDao.login(username, password);
+      await storage.setToken(data.token);
+      router.replace("/tabs");
+    } catch (error) {
+      if (Platform.OS === "web") {
+        window.alert("Une erreur est survenue lors de la connexion : " + error);
+      } else {
+        Alert.alert("Erreur", "Impossible de contacter le serveur");
+      }
+    }
+  };
 
   return (
     <View style={styles.container}>
@@ -30,7 +71,7 @@ export default function Index() {
           onChangeText={setPassword}
         />
 
-        <Button label="Connexion" />
+        <Button label="Connexion" onPress={handleLogin} />
       </View>
     </View>
   );

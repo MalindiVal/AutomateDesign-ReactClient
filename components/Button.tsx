@@ -2,14 +2,18 @@ import { Pressable, StyleSheet, Text, View } from "react-native";
 
 type Props = {
   label: string;
+  onPress?: () => void;
 };
 
-export default function Button({ label }: Props) {
+export default function Button({ label, onPress }: Props) {
   return (
     <View style={styles.buttonContainer}>
       <Pressable
         style={styles.button}
-        onPress={() => alert("You pressed a button.")}
+        onPress={() => {
+          console.log("Pressable touché");
+          onPress && onPress();
+        }}
       >
         <Text style={styles.buttonLabel}>{label}</Text>
       </Pressable>
@@ -19,27 +23,18 @@ export default function Button({ label }: Props) {
 
 const styles = StyleSheet.create({
   buttonContainer: {
-    width: 320,
-    height: 68,
-    marginHorizontal: 20,
-    alignItems: "center",
-    justifyContent: "center",
-    padding: 3,
+    width: "100%",
+    marginTop: 20,
   },
   button: {
-    borderRadius: 10,
-    width: "100%",
-    height: "100%",
+    backgroundColor: "#9A0932",
+    padding: 14,
+    borderRadius: 8,
     alignItems: "center",
-    justifyContent: "center",
-    flexDirection: "row",
   },
   buttonLabel: {
     color: "#fff",
-    backgroundColor: "#ff0404",
-    paddingHorizontal: 20,
-    paddingVertical: 10,
-    borderRadius: 5,
     fontSize: 16,
+    fontWeight: "bold",
   },
 });
