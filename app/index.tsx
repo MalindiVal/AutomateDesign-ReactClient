@@ -1,9 +1,12 @@
-import { Text, View,  StyleSheet } from 'react-native';
+import { StyleSheet, View } from "react-native";
+
+import Button from "@/components/Button";
 
 export default function Index() {
   return (
     <View style={styles.container}>
-      <Text style={styles.text}>Home screen</Text>
+      <Button label="Créer un automate" />
+      <Button label="Ouvrir un automate" />
     </View>
   );
 }
@@ -11,11 +14,15 @@ export default function Index() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#25292e',
-    alignItems: 'center',
-    justifyContent: 'center',
+    backgroundColor: "#25292e",
+    alignItems: "center",
   },
-  text: {
-    color: '#fff',
+  imageContainer: {
+    flex: 1,
+    paddingTop: 28,
+  },
+  footerContainer: {
+    flex: 1 / 3,
+    alignItems: "center",
   },
 });
