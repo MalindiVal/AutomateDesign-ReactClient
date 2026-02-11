@@ -25,4 +25,9 @@ const styles = StyleSheet.create({
     flex: 1 / 3,
     alignItems: "center",
   },
+  button: {
+    fontSize: 20,
+    textDecorationLine: "underline",
+    color: "#fff",
+  },
 });
