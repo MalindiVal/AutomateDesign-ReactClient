@@ -1,4 +1,5 @@
 import { automateDao } from "@/api/automateDao";
+import Button from "@/components/Button";
 import { storage } from "@/utils/storage";
 import { router } from "expo-router";
 import { useEffect, useState } from "react";
@@ -45,6 +46,13 @@ export default function ListScreen() {
     );
   }
 
+  const handleViewAutomate = (id: string) => {
+    router.push({
+      pathname: "/automateviewer",
+      params: { id: id },
+    });
+  };
+
   return (
     <View style={styles.container}>
       {Array.isArray(automates) && automates.length > 0 ? (
@@ -53,6 +61,10 @@ export default function ListScreen() {
             <Text key={auto.id} style={styles.automateStyle}>
               {auto.nom}
             </Text>
+            <Button
+              label={"Voir"}
+              onPress={() => handleViewAutomate(auto.id)}
+            />
           </View>
         ))
       ) : (

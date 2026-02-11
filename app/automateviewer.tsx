@@ -1,38 +1,86 @@
-import { Platform, Text, View } from "react-native";
-import Canvas from "react-native-canvas";
+import { automateDao } from "@/api/automateDao";
+import { useLocalSearchParams } from "expo-router";
+import { useEffect, useState } from "react";
+import { Text, View } from "react-native";
 
 export default function AutomateViewerScreen() {
-  const handleCanvas = (canvas: Canvas) => {
-    if (!canvas) return;
+  const { id } = useLocalSearchParams();
+  const [automate, setAutomate] = useState<any>(null);
+  const [loading, setLoading] = useState(true);
 
-    const ctx = canvas.getContext("2d");
+  useEffect(() => {
+    const fetchAutomate = async () => {
+      if (!id) return;
 
-    // définir taille canvas
-    canvas.width = 300;
-    canvas.height = 300;
+      try {
+        // id peut être string ou string[]
+        const automateId = Array.isArray(id) ? id[0] : id;
 
-    // fond gris
-    ctx.fillStyle = "#c81a1a";
-    ctx.fillRect(0, 0, canvas.width, canvas.height);
+        const data = await automateDao.getAutomateById(automateId);
+        console.log("Automate reçu :", data);
+        console.log("Etats reçus :", data.etats);
+        console.log("Transitions reçues :", data.transitions);
 
-    // cercle rouge au centre
-    ctx.fillStyle = "red";
-    ctx.beginPath();
-    ctx.arc(150, 150, 50, 0, Math.PI * 2);
-    ctx.fill();
-  };
+        const formattedAutomate = {
+          ...data,
+          etats: data.etats?.$values || [],
+          transitions: data.transitions?.$values || [],
+        };
+
+        setAutomate(formattedAutomate);
+      } catch (error) {
+        console.error("Erreur chargement automate :", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchAutomate();
+  }, [id]);
+
+  if (loading) {
+    return (
+      <View style={{ padding: 20 }}>
+        <Text>Chargement...</Text>
+      </View>
+    );
+  }
+
+  if (!automate) {
+    return (
+      <View style={{ padding: 20 }}>
+        <Text>Aucun automate trouvé</Text>
+      </View>
+    );
+  }
 
   return (
     <View style={{ flex: 1, padding: 20 }}>
-      <Text style={{ fontSize: 18, marginBottom: 10 }}>Automate Viewer</Text>
-      <Canvas
-        ref={handleCanvas}
-        style={{ borderWidth: 1, borderColor: "#000" }}
-      />
-      {Platform.OS === "web" && (
-        <Text style={{ marginTop: 10, color: "gray" }}>
-          Canvas compatible Web et Mobile
-        </Text>
+      <Text style={{ fontSize: 18 }}>Automate Viewer</Text>
+      <Text>ID reçu : {id}</Text>
+      <Text>Nom : {automate.nom}</Text>
+
+      <Text style={{ marginTop: 10, fontWeight: "bold" }}>États :</Text>
+      {automate.etats && automate.etats.length > 0 ? (
+        automate.etats.map((etat: any) => (
+          <Text>
+            ID : {etat.id}, Nom : {etat.nom}
+          </Text>
+        ))
+      ) : (
+        <Text>Aucun état trouvé</Text>
+      )}
+
+      <Text style={{ marginTop: 10, fontWeight: "bold" }}>Transitions :</Text>
+      {automate.transitions && automate.transitions.length > 0 ? (
+        automate.transitions.map((transition: any) => (
+          <Text>
+            Nom : {transition.condition} (de {transition.etatDebut.id} à{" "}
+            {transition.etatFinal.id})
+          </Text>
+        ))
+      ) : (
+        <Text>Aucune transition trouvée</Text>
       )}
     </View>
   );

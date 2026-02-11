@@ -13,4 +13,14 @@ export const automateDao = {
     );
     return Array.isArray(data.$values) ? data.$values : [];
   },
+  getAutomateById: async (id: string) => {
+    const token = await storage.getToken();
+    if (!token) throw new Error("Token manquant");
+    return await apiRequest(
+      `Automate/GetAutomateById?id=${id}`,
+      "GET",
+      null,
+      token,
+    );
+  },
 };
