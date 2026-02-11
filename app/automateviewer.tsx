@@ -1,4 +1,5 @@
 import { automateDao } from "@/api/automateDao";
+import AutomateCanvas from "@/components/automateCanvas";
 import { useLocalSearchParams } from "expo-router";
 import { useEffect, useState } from "react";
 import { Text, View } from "react-native";
@@ -18,16 +19,8 @@ export default function AutomateViewerScreen() {
 
         const data = await automateDao.getAutomateById(automateId);
         console.log("Automate reçu :", data);
-        console.log("Etats reçus :", data.etats);
-        console.log("Transitions reçues :", data.transitions);
 
-        const formattedAutomate = {
-          ...data,
-          etats: data.etats?.$values || [],
-          transitions: data.transitions?.$values || [],
-        };
-
-        setAutomate(formattedAutomate);
+        setAutomate(data);
       } catch (error) {
         console.error("Erreur chargement automate :", error);
       } finally {
@@ -59,29 +52,7 @@ export default function AutomateViewerScreen() {
       <Text style={{ fontSize: 18 }}>Automate Viewer</Text>
       <Text>ID reçu : {id}</Text>
       <Text>Nom : {automate.nom}</Text>
-
-      <Text style={{ marginTop: 10, fontWeight: "bold" }}>États :</Text>
-      {automate.etats && automate.etats.length > 0 ? (
-        automate.etats.map((etat: any) => (
-          <Text>
-            ID : {etat.id}, Nom : {etat.nom}
-          </Text>
-        ))
-      ) : (
-        <Text>Aucun état trouvé</Text>
-      )}
-
-      <Text style={{ marginTop: 10, fontWeight: "bold" }}>Transitions :</Text>
-      {automate.transitions && automate.transitions.length > 0 ? (
-        automate.transitions.map((transition: any) => (
-          <Text>
-            Nom : {transition.condition} (de {transition.etatDebut.id} à{" "}
-            {transition.etatFinal.id})
-          </Text>
-        ))
-      ) : (
-        <Text>Aucune transition trouvée</Text>
-      )}
+      <AutomateCanvas automate={automate} />
     </View>
   );
 }
