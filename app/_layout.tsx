@@ -7,6 +7,10 @@ export default function RootLayout() {
       <Stack.Screen name="index" options={{ headerShown: false }} />{" "}
       {/* Login */}
       <Stack.Screen name="tabs" options={{ headerShown: false }} /> {/* App */}
+      <Stack.Screen
+        name="automateviewer"
+        options={{ title: "Détails de l'automate" }}
+      />{" "}
     </Stack>
   );
 }
