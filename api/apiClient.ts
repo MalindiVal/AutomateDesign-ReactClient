@@ -1,23 +1,43 @@
-const API_URL = "https://localhost:7294/";
+const API_URL = "https://fasciculate-shona-splurgily.ngrok-free.dev/";
 
-export async function apiRequest(
+export async function apiRequest<T = any>(
   endpoint: string,
-  method: string = "GET",
+  method: "GET" | "POST" | "PUT" | "DELETE" = "GET",
   body?: any,
   token?: string,
-) {
-  const headers: any = {
+): Promise<T> {
+  const headers: Record<string, string> = {
     "Content-Type": "application/json",
   };
-  if (token) headers.Authorization = `Bearer ${token}`;
 
-  const response = await fetch(`${API_URL}${endpoint}`, {
-    method,
-    headers,
-    body: body ? JSON.stringify(body) : undefined,
-  });
+  if (token) {
+    headers.Authorization = `Bearer ${token}`;
+  }
 
-  const data = await response.json();
-  if (!response.ok) throw new Error(data || "Erreur API");
-  return data;
+  try {
+    const response = await fetch(`${API_URL}${endpoint}`, {
+      method,
+      headers,
+      body: body ? JSON.stringify(body) : undefined,
+    });
+
+    // 🔥 Safe JSON parsing
+    let data;
+    try {
+      data = await response.json();
+    } catch {
+      data = null;
+    }
+
+    if (!response.ok) {
+      const message =
+        data?.message || data?.error || JSON.stringify(data) || "Erreur API";
+      throw new Error(message);
+    }
+
+    return data as T;
+  } catch (error: any) {
+    // 🔥 Gestion réseau
+    throw new Error(error.message || "Erreur réseau");
+  }
 }
