@@ -4,12 +4,12 @@ import { storage } from "@/utils/storage";
 import { router } from "expo-router";
 import { useEffect, useState } from "react";
 import {
-    Alert,
-    Platform,
-    StyleSheet,
-    Text,
-    TextInput,
-    View,
+  Alert,
+  Platform,
+  StyleSheet,
+  Text,
+  TextInput,
+  View,
 } from "react-native";
 
 export default function Index() {
@@ -52,7 +52,7 @@ export default function Index() {
       <Text style={styles.title}>Bienvenue sur AutomateDesign</Text>
 
       <View style={styles.form}>
-        <Text style={styles.label}>Nom d'utilisateur</Text>
+        <Text style={styles.label}>Pseudo</Text>
         <TextInput
           style={styles.input}
           placeholder="Entrez votre nom"

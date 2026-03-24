@@ -16,22 +16,21 @@ export default function ListScreen() {
 
       if (!token) {
         router.replace("/");
-        return;
-      }
-
-      try {
-        const data = await automateDao.getAllAutomate(); // passer token si nécessaire
-        setAutomates(data);
-      } catch (error) {
-        if (Platform.OS === "web") {
-          window.alert(
-            "Erreur lors de la récupération des automates : " + error,
-          );
-        } else {
-          Alert.alert("Erreur", "Impossible de récupérer les automates");
+      } else {
+        try {
+          const data = await automateDao.getAllAutomate(); // passer token si nécessaire
+          setAutomates(data);
+        } catch (error) {
+          if (Platform.OS === "web") {
+            window.alert(
+              "Erreur lors de la récupération des automates : " + error,
+            );
+          } else {
+            Alert.alert("Erreur", "Impossible de récupérer les automates");
+          }
+        } finally {
+          setLoading(false);
         }
-      } finally {
-        setLoading(false);
       }
     };
 

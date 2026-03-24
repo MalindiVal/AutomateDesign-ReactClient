@@ -6,8 +6,8 @@ import { useEffect } from "react";
 export default function LogoutScreen() {
   useEffect(() => {
     const logout = async () => {
-      await storage.removeToken(); // supprime le token
-      router.replace("/"); // redirige vers LoginScreen
+      await storage.removeToken();
+      router.replace("/");
     };
     logout();
   }, []);
