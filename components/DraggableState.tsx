@@ -1,4 +1,5 @@
 import React from "react";
+import { View } from "react-native";
 import { Gesture, GestureDetector } from "react-native-gesture-handler";
 import Animated, {
     useAnimatedProps,
@@ -38,7 +39,7 @@ export default function DraggableState({ etat }: any) {
 
   return (
     <GestureDetector gesture={panGesture}>
-      <>
+      <View>
         <AnimatedCircle
           animatedProps={animatedCircleProps}
           r={30}
@@ -64,7 +65,7 @@ export default function DraggableState({ etat }: any) {
         >
           {etat.nom}
         </AnimatedText>
-      </>
+      </View>
     </GestureDetector>
   );
 }

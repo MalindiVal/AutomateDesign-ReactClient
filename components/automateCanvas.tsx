@@ -3,14 +3,45 @@ import React from "react";
 import { View } from "react-native";
 import Svg, {
   Defs,
+  G,
   Line,
   Marker,
   Path,
-  Text as SvgText
+  Text as SvgText,
 } from "react-native-svg";
 
+type Etat = {
+  id: string;
+  nom: string;
+  position: { x: number; y: number };
+  estFinal?: boolean;
+};
+
+type Transition = {
+  id: string;
+  etatDebut: Etat;
+  etatFinal: Etat;
+  condition: string;
+};
+
+type Automate = {
+  etats: Etat[];
+  transitions: Transition[];
+};
+
 export default function AutomateCanvas({ automate }: any) {
-  if (!automate) return null;
+  const [data, setData] = React.useState<Automate>(automate);
+
+  const updateEtatPosition = (id: string, x: number, y: number) => {
+    setData((prev) => ({
+      ...prev,
+      etats: prev.etats.map((e) =>
+        e.id === id ? { ...e, position: { x, y } } : e,
+      ),
+    }));
+  };
+
+  if (!data) return null;
 
   return (
     <View style={{ flex: 1 }}>
@@ -29,14 +60,14 @@ export default function AutomateCanvas({ automate }: any) {
           </Marker>
         </Defs>
         {/* Transitions */}
-        {automate.transitions.map((t: any) => {
+        {data.transitions.map((t: any) => {
           if (!t.etatDebut || !t.etatFinal) return null;
 
           const start = t.etatDebut.position;
           const end = t.etatFinal.position;
           const dx = end.x - start.x;
           const dy = end.y - start.y;
-          const distance = Math.sqrt(dx * dx + dy * dy);
+          const distance = Math.max(Math.sqrt(dx * dx + dy * dy), 0.001);
 
           const offset = 30; // rayon du cercle
 
@@ -48,7 +79,7 @@ export default function AutomateCanvas({ automate }: any) {
 
           if (t.etatDebut.id === t.etatFinal.id) {
             return (
-              <React.Fragment key={t.id}>
+              <G key={t.id}>
                 <Path
                   d={`M ${start.x} ${start.y - 30}
             C ${start.x + 50} ${start.y - 80},
@@ -66,12 +97,12 @@ export default function AutomateCanvas({ automate }: any) {
                 >
                   {t.condition}
                 </SvgText>
-              </React.Fragment>
+              </G>
             );
           }
 
           return (
-            <React.Fragment key={t.id}>
+            <G key={t.id}>
               <Line
                 x1={startX}
                 y1={startY}
@@ -89,13 +120,17 @@ export default function AutomateCanvas({ automate }: any) {
               >
                 {t.condition}
               </SvgText>
-            </React.Fragment>
+            </G>
           );
         })}
 
         {/* États */}
-        {automate.etats.map((etat: any) => (
-          <DraggableState key={etat.id} etat={etat} />
+        {data.etats.map((etat: any) => (
+          <DraggableState
+            key={etat.id}
+            etat={etat}
+            onMove={updateEtatPosition}
+          />
         ))}
       </Svg>
     </View>
