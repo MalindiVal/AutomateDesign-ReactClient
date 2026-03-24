@@ -1,6 +1,8 @@
+import { Etat } from "@/models/Etats";
 import { Circle, Group, Text, useFont } from "@shopify/react-native-skia";
-import React from "react";
-import { Gesture, GestureDetector } from "react-native-gesture-handler";
+import React, { useEffect } from "react";
+import { View } from "react-native";
+import { Gesture } from "react-native-gesture-handler";
 import {
     runOnJS,
     useDerivedValue,
@@ -8,16 +10,12 @@ import {
 } from "react-native-reanimated";
 
 type Props = {
-  etat: {
-    id: string;
-    nom: string;
-    position: { x: number; y: number };
-    estFinal?: boolean;
-  };
+  etat: Etat;
+  scale: number;
   onMove: (id: string, x: number, y: number) => void;
 };
 
-export default function DraggableState({ etat, onMove }: Props) {
+export default function DraggableState({ etat, scale, onMove }: Props) {
   const font = useFont(require("@/assets/fonts/Roboto-Regular.ttf"), 14);
 
   const x = useSharedValue(etat.position.x);
@@ -31,21 +29,29 @@ export default function DraggableState({ etat, onMove }: Props) {
 
   const panGesture = Gesture.Pan()
     .onStart(() => {
+      console.log("START");
       startX.value = x.value;
       startY.value = y.value;
     })
     .onUpdate((event) => {
-      x.value = startX.value + event.translationX;
-      y.value = startY.value + event.translationY;
+      console.log("MOVE");
+      x.value = startX.value + event.translationX / scale;
+      y.value = startY.value + event.translationY / scale;
     })
     .onEnd(() => {
       runOnJS(onMove)(etat.id, x.value, y.value);
     });
 
+  useEffect(() => {
+    x.value = etat.position.x;
+    y.value = etat.position.y;
+  }, [etat.position.x, etat.position.y]);
+
   if (!font) return null;
 
   return (
-    <GestureDetector gesture={panGesture}>
+    <View>
+      {/*<GestureDetector gesture={panGesture}>*/}
       <Group>
         <Circle cx={x} cy={y} r={30} color="white" />
         <Circle
@@ -70,6 +76,7 @@ export default function DraggableState({ etat, onMove }: Props) {
 
         <Text x={textX} y={textY} text={etat.nom} font={font} color="black" />
       </Group>
-    </GestureDetector>
+      {/*</GestureDetector>*/}
+    </View>
   );
 }

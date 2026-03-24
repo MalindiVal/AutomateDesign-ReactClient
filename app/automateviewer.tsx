@@ -66,10 +66,7 @@ export default function AutomateViewerScreen() {
   }
 
   return (
-    <View style={{ flex: 1, padding: 20 }}>
-      <Text style={{ fontSize: 18 }}>Automate Viewer</Text>
-      <Text>ID reçu : {id}</Text>
-      <Text>Nom : {automate.nom}</Text>
+    <View style={{ flex: 1, backgroundColor: "#fff" }}>
       <AutomateCanvas automate={automate} />
     </View>
   );
