@@ -59,4 +59,9 @@ export const automateDao = {
     );
     return normalizeAutomate(raw);
   },
+  deleteAutomate: async (id: string) => {
+    const token = await storage.getToken();
+    if (!token) throw new Error("Token manquant");
+    await apiRequest(`Automate/DeleteAutomate?id=${id}`, "DELETE", null, token);
+  },
 };

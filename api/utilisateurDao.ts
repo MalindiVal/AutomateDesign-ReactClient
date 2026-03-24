@@ -4,4 +4,7 @@ export const utilisateurDao = {
   login: async (login: string, mdp: string) => {
     return await apiRequest("Utilisateur/Login", "POST", { login, mdp });
   },
+  register: async (login: string, mdp: string) => {
+    return await apiRequest("Utilisateur/Register", "POST", { login, mdp });
+  },
 };
