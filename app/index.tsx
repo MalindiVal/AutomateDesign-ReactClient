@@ -72,6 +72,10 @@ export default function Index() {
         />
 
         <Button label="Connexion" onPress={handleLogin} />
+        <Button
+          label="Pas de compte ? Inscrivez-vous"
+          onPress={() => router.replace("/register")}
+        />
       </View>
     </View>
   );

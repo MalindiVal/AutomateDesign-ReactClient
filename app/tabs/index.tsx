@@ -7,7 +7,6 @@ export default function Index() {
   return (
     <View style={styles.container}>
       <Button label="Créer un automate" />
-      <Button label="Ouvrir un automate" />
       <Text style={styles.title}>Automates Récents</Text>
       {/* Liste des automates récents */}
       <ListAutomates />

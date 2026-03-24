@@ -1,9 +1,10 @@
 import { automateDao } from "@/api/automateDao";
 import Button from "@/components/Button";
 import { storage } from "@/utils/storage";
-import { router } from "expo-router";
-import { useEffect, useState } from "react";
+import { router, useFocusEffect } from "expo-router";
+import { useCallback, useState } from "react";
 import {
+    ActivityIndicator,
     Alert,
     Platform,
     ScrollView,
@@ -16,33 +17,38 @@ export default function ListAutomates() {
   const [automates, setAutomates] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    const checkAndFetch = async () => {
-      const token = await storage.getToken();
-
-      if (!token) {
-        router.replace("/");
-        return;
+  const fetchAutomates = async () => {
+    try {
+      const data = await automateDao.getAllAutomate();
+      setAutomates(data);
+    } catch (error) {
+      if (Platform.OS === "web") {
+        window.alert("Erreur : " + error);
+      } else {
+        Alert.alert("Erreur", "Impossible de récupérer les automates");
       }
+    } finally {
+      setLoading(false);
+    }
+  };
 
-      try {
-        const data = await automateDao.getAllAutomate();
-        setAutomates(data);
-      } catch (error) {
-        if (Platform.OS === "web") {
-          window.alert(
-            "Erreur lors de la récupération des automates : " + error,
-          );
-        } else {
-          Alert.alert("Erreur", "Impossible de récupérer les automates");
+  useFocusEffect(
+    useCallback(() => {
+      const checkAndFetch = async () => {
+        const token = await storage.getToken();
+
+        if (!token) {
+          router.replace("/");
+          return;
         }
-      } finally {
-        setLoading(false);
-      }
-    };
 
-    checkAndFetch();
-  }, []);
+        setLoading(true);
+        await fetchAutomates();
+      };
+
+      checkAndFetch();
+    }, []),
+  );
 
   const handleViewAutomate = (id: string) => {
     router.push({
@@ -53,7 +59,8 @@ export default function ListAutomates() {
 
   if (loading) {
     return (
-      <View>
+      <View style={styles.center}>
+        <ActivityIndicator size="large" />
         <Text>Chargement...</Text>
       </View>
     );
@@ -65,12 +72,26 @@ export default function ListAutomates() {
         automates.map((auto) => (
           <View key={auto.id} style={styles.automateStyle}>
             <Text style={styles.title}>{auto.nom}</Text>
-
             <Button label="Voir" onPress={() => handleViewAutomate(auto.id)} />
+            <Button
+              label="Supprimer"
+              onPress={() =>
+                Alert.alert("Confirmation", "Supprimer ?", [
+                  { text: "Annuler" },
+                  {
+                    text: "OK",
+                    onPress: async () => {
+                      await automateDao.deleteAutomate(auto.id);
+                      fetchAutomates();
+                    },
+                  },
+                ])
+              }
+            />
           </View>
         ))
       ) : (
-        <Text>Aucun automate trouvé</Text>
+        <Text style={styles.empty}>Aucun automate trouvé</Text>
       )}
     </ScrollView>
   );
@@ -80,19 +101,29 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: "#25292e",
-
     padding: 20,
+    width: "100%",
+  },
+  center: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
   },
   title: {
-    fontSize: 24,
-    marginBottom: 30,
+    fontSize: 20,
+    marginBottom: 10,
     fontWeight: "bold",
+    color: "#fff",
   },
   automateStyle: {
     backgroundColor: "#525252",
-    color: "#fff",
     padding: 15,
     borderRadius: 8,
     marginBottom: 10,
+  },
+  empty: {
+    color: "#fff",
+    textAlign: "center",
+    marginTop: 20,
   },
 });
