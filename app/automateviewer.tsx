@@ -5,17 +5,25 @@ import { useEffect, useState } from "react";
 import { Text, View } from "react-native";
 
 export default function AutomateViewerScreen() {
-  const { id } = useLocalSearchParams();
+  const { id } = useLocalSearchParams<{ id?: string | string[] }>();
   const [automate, setAutomate] = useState<any>(null);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     const fetchAutomate = async () => {
-      if (!id) return;
+      if (!id) {
+        setLoading(false);
+        return;
+      }
 
       try {
-        // id peut être string ou string[]
         const automateId = Array.isArray(id) ? id[0] : id;
+
+        if (!automateId) {
+          setLoading(false);
+          return;
+        }
 
         const data = await automateDao.getAutomateById(automateId);
         console.log("Automate reçu :", data);
@@ -23,6 +31,8 @@ export default function AutomateViewerScreen() {
         setAutomate(data);
       } catch (error) {
         console.error("Erreur chargement automate :", error);
+        setError("Impossible de charger l'automate");
+        setAutomate(null);
       } finally {
         setLoading(false);
       }
@@ -35,6 +45,14 @@ export default function AutomateViewerScreen() {
     return (
       <View style={{ padding: 20 }}>
         <Text>Chargement...</Text>
+      </View>
+    );
+  }
+
+  if (error) {
+    return (
+      <View style={{ padding: 20 }}>
+        <Text>{error}</Text>
       </View>
     );
   }
