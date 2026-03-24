@@ -28,19 +28,6 @@ export default function TabLayout() {
         }}
       />
       <Tabs.Screen
-        name="list"
-        options={{
-          title: "Liste des automates",
-          tabBarIcon: ({ color, focused }) => (
-            <Ionicons
-              name={focused ? "list-sharp" : "list-outline"}
-              color={color}
-              size={24}
-            />
-          ),
-        }}
-      />
-      <Tabs.Screen
         name="logout"
         options={{
           title: "Déconnexion",
