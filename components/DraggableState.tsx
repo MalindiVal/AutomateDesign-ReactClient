@@ -1,7 +1,7 @@
 import { Etat } from "@/models/Etats";
 import { Circle, Group, Text, useFont } from "@shopify/react-native-skia";
 import React, { useEffect } from "react";
-import { View } from "react-native";
+import { Platform, View } from "react-native";
 import { Gesture } from "react-native-gesture-handler";
 import {
     runOnJS,
@@ -16,7 +16,12 @@ type Props = {
 };
 
 export default function DraggableState({ etat, scale, onMove }: Props) {
-  const font = useFont(require("@/assets/fonts/Roboto-Regular.ttf"), 14);
+  const font = useFont(
+    Platform.OS === "web"
+      ? "/fonts/Roboto-Regular.ttf"
+      : require("@/assets/fonts/Roboto-Regular.ttf"),
+    14,
+  );
 
   const x = useSharedValue(etat.position.x);
   const y = useSharedValue(etat.position.y);

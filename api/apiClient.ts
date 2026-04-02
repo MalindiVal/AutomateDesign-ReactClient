@@ -1,4 +1,11 @@
-const API_URL = "https://fasciculate-shona-splurgily.ngrok-free.dev/";
+import { Platform } from "react-native";
+
+
+
+export const API_URL =
+  Platform.OS === "web"
+    ? "http://localhost:5197/"
+    : "https://fasciculate-shona-splurgily.ngrok-free.dev/";
 
 export async function apiRequest<T = any>(
   endpoint: string,
